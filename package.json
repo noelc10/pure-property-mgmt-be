@@ -1,0 +1,17 @@
+{
+  "name": "pure-property-mgmt-backend",
+  "packageManager": "yarn@4.4.1",
+  "scripts": {
+    "dev": "ts-node src/server.ts"
+  },
+  "dependencies": {
+    "http": "^0.0.1-security",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.3",
+    "@types/uuid": "^11.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}
