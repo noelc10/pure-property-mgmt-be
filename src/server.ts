@@ -1,24 +1,28 @@
 import http from 'http'
-import { AgentStore } from './stores/agent.store'
+import { AgentStore } from './stores/agent'
 import { parseBody } from './utils/parseBody'
 
 const server = http.createServer(async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204)
+    return res.end()
+  }
+
   const { method, url } = req
   res.setHeader('Content-Type', 'application/json')
 
   try {
+    // GET all agents
     if (method === 'GET' && url === '/agents') {
       res.writeHead(200)
       return res.end(JSON.stringify(AgentStore.all()))
     }
 
-    if (method === 'POST' && url === '/agents') {
-      const body = await parseBody(req)
-      const agent = AgentStore.create(body)
-      res.writeHead(201)
-      return res.end(JSON.stringify(agent))
-    }
-
+    // GET single agent
     if (method === 'GET' && url?.startsWith('/agents/')) {
       const id = url.split('/')[2]
       const agent = AgentStore.get(id)
@@ -27,15 +31,15 @@ const server = http.createServer(async (req, res) => {
       return res.end(JSON.stringify(agent))
     }
 
-    if (method === 'PUT' && url?.startsWith('/agents/')) {
-      const id = url.split('/')[2]
+    // CREATE or UPDATE agent
+    if (method === 'POST' && url === '/agents') {
       const body = await parseBody(req)
-      const agent = AgentStore.update(id, body)
-      if (!agent) { res.writeHead(404); return res.end(JSON.stringify({ message: 'Not found' })) }
+      const agent = AgentStore.createOrUpdate(body)
       res.writeHead(200)
       return res.end(JSON.stringify(agent))
     }
 
+    // DELETE agent
     if (method === 'DELETE' && url?.startsWith('/agents/')) {
       const id = url.split('/')[2]
       const success = AgentStore.remove(id)
@@ -46,7 +50,7 @@ const server = http.createServer(async (req, res) => {
 
     res.writeHead(404)
     res.end(JSON.stringify({ message: 'Route not found' }))
-  } catch {
+  } catch (err) {
     res.writeHead(400)
     res.end(JSON.stringify({ message: 'Bad request' }))
   }

@@ -21,3 +21,7 @@ after running the above command, you can use the port shown in the terminal to a
 ```sh
 API running at http://localhost:3000
 ```
+
+### Front-end
+
+The front-end can be found in the [`Pure Property Mgmt.`](https://github.com/noelc10/pure-property-mgmt) repository. Follow the instructions in that repository to set up and run the front-end application.
